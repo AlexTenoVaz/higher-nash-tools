@@ -1,4 +1,4 @@
-# higher-nash-tools
+# Higher Nash Tools
 Computational tools for the study of higher Nash modifications and singularities.
 This repository contains:
 
