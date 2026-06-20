@@ -1,13 +1,7 @@
 from math import factorial
 from itertools import product
+from sympy import ( symbols, diff, SparseMatrix)
 
-
-# Sympy
-from sympy import (
-    symbols, diff, SparseMatrix, sqrt
-)
-
-# Set of global variables
 x, y, z, t = symbols('x y z t')
 
 
