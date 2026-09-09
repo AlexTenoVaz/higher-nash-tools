@@ -1,7 +1,7 @@
 import sympy as sp
 
 
-def weighted_order(polynomial, weights):
+def weighted_order(polynomial, weights, variables=None):
     """
     Compute the weighted order of a polynomial.
 
@@ -19,6 +19,8 @@ def weighted_order(polynomial, weights):
         Polynomial whose weighted order is computed.
     weights : tuple or list of numbers
         Weight vector e.
+    variables : tuple or list of sympy.Symbol, optional
+        Variables corresponding to the entries of `weights`.
 
     Returns
     -------
@@ -34,7 +36,13 @@ def weighted_order(polynomial, weights):
     if polynomial == 0:
         return sp.oo
 
-    variables = sorted(polynomial.free_symbols, key=lambda symbol: symbol.name)
+    if variables is None:
+        variables = sorted(
+            polynomial.free_symbols,
+            key=lambda symbol: symbol.name
+        )
+    else:
+        variables = list(variables)
 
     if len(weights) != len(variables):
         raise ValueError(
@@ -44,7 +52,10 @@ def weighted_order(polynomial, weights):
     polynomial = sp.Poly(polynomial, *variables)
 
     weighted_orders = [
-        sum(exponent * weight for exponent, weight in zip(monomial, weights))
+        sum(
+            exponent * weight
+            for exponent, weight in zip(monomial, weights)
+        )
         for monomial in polynomial.monoms()
     ]
 

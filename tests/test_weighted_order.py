@@ -26,3 +26,6 @@ def test_weighted_order_ignores_coefficients():
     f = 7*x**2 + 100*y**3
 
     assert weighted_order(f, (1, 1)) == 2
+    
+def test_weighted_order_of_constant_with_explicit_variables():
+    assert weighted_order(1, (1, 1, 1), variables=(x, y, z)) == 0
