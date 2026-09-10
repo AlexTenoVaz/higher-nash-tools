@@ -7,12 +7,21 @@ x, y, z, t = sp.symbols("x y z t")
 
 
 def test_separating_pair_is_found():
-    curve_1 = [t, t, t]
-    curve_2 = [t, 2*t, t]
+    curve_1 = [
+        -t*(t + sp.I)*(t + 2*sp.I),
+        -t*(t + 2*sp.I),
+        -t*(t + 2*sp.I)
+    ]
+
+    curve_2 = [
+        t*(t + sp.I)*(t + 2*sp.I),
+        t*(t + 2*sp.I),
+        -t*(t + 2*sp.I)
+    ]
 
     minors = [
-        x,
-        y,
+        16*x**4,
+        8*x*(x**2 + y**2),
     ]
 
     result = grassmannian_separation(
@@ -24,8 +33,14 @@ def test_separating_pair_is_found():
 
     assert result["separated"] is True
     assert result["pair"] == (0, 1)
-    assert result["limits_curve_1"] == 1
-    assert result["limits_curve_2"] == 2
+
+    assert sp.simplify(
+        result["limits_curve_1"] + sp.I/2
+    ) == 0
+
+    assert sp.simplify(
+        result["limits_curve_2"] - sp.I/2
+    ) == 0
 
 
 def test_curves_not_separated_by_given_minors():
