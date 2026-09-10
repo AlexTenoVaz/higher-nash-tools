@@ -87,6 +87,28 @@ def build_pipeline(
         "optimal_column_sets": optimal_column_sets,
     }
 
+def _try_separation_with_minor(
+        minor,
+        previous_minors,
+        curve_1,
+        curve_2,
+        parameter
+        ):
+    """
+    Test a new minor against previously computed nonzero minors.
+    """
+    for previous_minor in previous_minors:
+        result = grassmannian_separation(
+            curve_1,
+            curve_2,
+            [previous_minor, minor],
+            parameter
+        )
+
+        if result["separated"]:
+            return result
+
+    return None
 
 def separate_curves(
         pipeline_data,
@@ -131,40 +153,36 @@ def separate_curves(
         if minor == 0:
             continue
 
-        computed_minors.append(minor)
-
-        if len(computed_minors) < 2:
-            continue
-
-        result = grassmannian_separation(
+        result = _try_separation_with_minor(
+            minor,
+            computed_minors,
             curve_1,
             curve_2,
-            computed_minors,
             parameter
         )
 
-        if result["separated"]:
+        if result is not None:
             return result
+
+        computed_minors.append(minor)
 
     if additional_minors is not None:
         for minor in additional_minors:
             if minor == 0:
                 continue
 
-            computed_minors.append(minor)
-
-            if len(computed_minors) < 2:
-                continue
-
-            result = grassmannian_separation(
+            result = _try_separation_with_minor(
+                minor,
+                computed_minors,
                 curve_1,
                 curve_2,
-                computed_minors,
                 parameter
             )
 
-            if result["separated"]:
+            if result is not None:
                 return result
+
+            computed_minors.append(minor)
 
     return grassmannian_separation(
         curve_1,
