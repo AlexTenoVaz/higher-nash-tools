@@ -1,25 +1,41 @@
 # Higher Nash Tools
-Computational tools for the study of higher Nash modifications and singularities.
-This repository contains:
 
-- Higher Jacobian matrices
-- Curves on exceptional divisors
-- Curve descent algorithms
-- Order matrices
-- Minimum-cost matching
-- Enumeration of optimal minors
-- Examples for ADE singularities
+Computational tools developed for the study of higher Nash modifications and
+singularities.
 
-## Quick Example
+The repository contains implementations for:
 
-```python
-from jacobian import *
+- Higher-order Jacobian matrices.
+- Parameterized curves on exceptional divisors.
+- Descent of curves through blow-ups.
+- Weighted orders and order matrices.
+- Minimum-cost matchings.
+- Enumeration of optimal column sets.
+- Exact maximal minors.
+- Grassmannian separation tests.
+- Computational examples related to ADE singularities.
 
-f = x**2 + y**3 + z**4
+## Repository structure
 
-J = jacobian_matrix(
-    f,
-    jac_order_local=5
-)
+```text
+source/
+    higher_jacobian_matrix.py
+    curves.py
+    exponents.py
+    grassmannian.py
+    matching.py
+    minors.py
+    optimal_columns.py
+    order.py
+    order_matrix.py
+    pipeline.py
+    weighted_order.py
 
-print(J)
+tests/
+    ...
+    
+examples/
+    e6_pipeline.py
+
+notebooks/
+    Higher_Jacobian_Matrix.ipynb
