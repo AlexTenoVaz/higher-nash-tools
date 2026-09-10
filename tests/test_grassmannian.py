@@ -84,3 +84,39 @@ def test_zero_denominator_is_skipped():
     assert result["pair"] == (1, 2)
     assert result["limits_curve_1"] == 1
     assert result["limits_curve_2"] == 2
+    
+def test_a2_real_example_from_thesis():
+    curve_1 = [
+        -t*(t + sp.I)*(t + 2*sp.I),
+        -t*(t + 2*sp.I),
+        -t*(t + 2*sp.I)
+    ]
+
+    curve_2 = [
+        t*(t + sp.I)*(t + 2*sp.I),
+        t*(t + 2*sp.I),
+        -t*(t + 2*sp.I)
+    ]
+
+    minors = [
+        16*x**4,
+        8*x*(x**2 + y**2),
+    ]
+
+    result = grassmannian_separation(
+        curve_1,
+        curve_2,
+        minors,
+        t
+    )
+
+    assert result["separated"] is True
+    assert result["pair"] == (0, 1)
+
+    assert sp.simplify(
+        result["limits_curve_1"] + sp.I/2
+    ) == 0
+
+    assert sp.simplify(
+        result["limits_curve_2"] - sp.I/2
+    ) == 0
