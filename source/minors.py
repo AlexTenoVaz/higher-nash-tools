@@ -32,4 +32,4 @@ def maximal_minor(jacobian, columns):
             "A maximal minor must select exactly one column per row."
         )
 
-    return sp.expand(J[:, columns].det())
+    return sp.expand(J[:, columns].det(method="domain-ge"))
