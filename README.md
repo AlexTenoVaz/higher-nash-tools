@@ -16,7 +16,6 @@ The project provides Python implementations for:
 
 ## Repository structure
 
-```text
 higher-nash-tools/
 ├── source/
 │   ├── curves.py
@@ -39,4 +38,14 @@ higher-nash-tools/
 ├── notebooks/
 │   └── Higher_Jacobian_Matrix.ipynb
 │
-└── README.md
+├── docs/
+│   └── HigherNashTools_Manual_Public_EN.pdf
+│
+├── README.md
+└── requirements.txt
+
+## Documentation
+
+A public user manual is available in PDF format:
+
+[Higher Nash Tools — Public User Manual](docs/HigherNashTools_Manual_Public_EN.pdf)
