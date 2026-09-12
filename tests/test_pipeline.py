@@ -79,8 +79,8 @@ def test_e6_automatic_pipeline():
         for columns in optimal_sets
     }
 
-    assert len(optimal_sets) == 51
-    assert len(canonical_sets) == 51
+    assert len(optimal_sets) == 66
+    assert len(canonical_sets) == 66
 
     assert all(
         len(columns) == 35

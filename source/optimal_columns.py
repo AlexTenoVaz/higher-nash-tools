@@ -1,5 +1,3 @@
-from itertools import combinations
-
 import sympy as sp
 
 from source.matching import minimum_cost_matching
@@ -11,38 +9,28 @@ def enumerate_optimal_column_sets(
         optimal_cost
         ):
     """
-    Enumerate column sets attaining a prescribed minimum matching cost.
+    Enumerate all column sets attaining the prescribed minimum matching cost.
 
-    The search follows the exclusion strategy of Algorithm 8:
-    starting from an optimal column set, columns are progressively
-    excluded and the minimum-cost matching problem is solved again.
-
-    Branches for which the minimum cost becomes larger than the
-    prescribed optimal cost are discarded, since removing additional
-    columns cannot decrease the minimum cost.
+    The search keeps the exclusion set as part of the state. At each state,
+    one optimal column set is obtained. Excluding each of its columns creates
+    subproblems that partition the remaining optimal solutions. Memoization
+    avoids solving the same exclusion problem more than once.
     """
     O = sp.Matrix(order_matrix)
+    rows = O.rows
 
     initial_columns = tuple(sorted(initial_columns))
 
-    if len(initial_columns) != O.rows:
+    if len(initial_columns) != rows:
         raise ValueError(
             "The initial column set must contain one column per row."
         )
 
-    results = [list(initial_columns)]
-
-    discovered = {initial_columns}
-    processed = set()
-
-    # Each element of the queue is an optimal column set whose
-    # descendants still have to be explored.
-    queue = [initial_columns]
-
-    # Cache matching computations for exclusion sets.
+    results = set()
+    visited_exclusions = set()
     cache = {}
 
-    def solve_with_exclusions(excluded_columns):
+    def solve(excluded_columns):
         excluded_columns = tuple(sorted(set(excluded_columns)))
 
         if excluded_columns not in cache:
@@ -56,58 +44,36 @@ def enumerate_optimal_column_sets(
 
         return cache[excluded_columns]
 
-    def explore_column_set(columns):
-        """
-        Explore all relevant exclusions of one optimal column set.
+    def explore(excluded_columns):
+        excluded_columns = tuple(sorted(set(excluded_columns)))
 
-        The recursion is indexed by position, so every subset of
-        `columns` is visited at most once.
-        """
-        columns = tuple(columns)
-
-        if columns in processed:
+        if excluded_columns in visited_exclusions:
             return
 
-        processed.add(columns)
+        visited_exclusions.add(excluded_columns)
 
-        def explore_subsets(start, excluded):
-            excluded = tuple(excluded)
+        solution = solve(excluded_columns)
 
-            for index in range(start, len(columns)):
-                new_excluded = excluded + (columns[index],)
+        if solution is None:
+            return
 
-                solution = solve_with_exclusions(new_excluded)
+        columns, cost = solution
 
-                if solution is None:
-                    continue
+        if cost != optimal_cost:
+            return
 
-                new_columns, new_cost = solution
+        columns = tuple(sorted(columns))
+        results.add(columns)
 
-                # Removing more columns cannot improve the minimum cost.
-                # Therefore this entire branch can be discarded.
-                if new_cost > optimal_cost:
-                    continue
+        # Every other optimal solution differs from this one by omitting
+        # at least one of its columns. Recursing on each such exclusion
+        # therefore reaches every remaining optimal solution.
+        for column in columns:
+            explore(excluded_columns + (column,))
 
-                new_columns = tuple(sorted(new_columns))
+    explore(())
 
-                if (
-                    new_cost == optimal_cost
-                    and new_columns not in discovered
-                ):
-                    discovered.add(new_columns)
-                    results.append(list(new_columns))
-                    queue.append(new_columns)
-
-                # Continue exploring larger exclusion sets.
-                explore_subsets(
-                    index + 1,
-                    new_excluded
-                )
-
-        explore_subsets(0, ())
-
-    while queue:
-        current = queue.pop(0)
-        explore_column_set(current)
-
-    return results
+    return [
+        list(columns)
+        for columns in sorted(results)
+    ]

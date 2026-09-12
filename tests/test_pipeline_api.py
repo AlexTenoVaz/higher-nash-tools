@@ -49,7 +49,7 @@ def test_e6_pipeline_api():
 
     assert result["optimal_cost"] == 226
 
-    assert len(result["optimal_column_sets"]) == 51
+    assert len(result["optimal_column_sets"]) == 66
 
 
 def test_a2_pipeline_api_with_geometric_minor():

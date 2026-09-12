@@ -85,7 +85,7 @@ def test_optimal_columns_with_real_order_matrix():
         [3, 4, 6, 9, 10, 11, 12, 13, 14, 16]
     ]
     
-def test_e6_m5_finds_51_optimal_column_sets():
+def test_e6_m5_finds_66_optimal_column_sets():
     from source.order_matrix import order_matrix
 
     x, y, z = sp.symbols("x y z")
@@ -111,8 +111,8 @@ def test_e6_m5_finds_51_optimal_column_sets():
         for columns in optimal_sets
     }
 
-    assert len(optimal_sets) == 51
-    assert len(canonical_sets) == 51
+    assert len(optimal_sets) == 66
+    assert len(canonical_sets) == 66
 
     assert all(
         len(columns) == 35
@@ -126,3 +126,35 @@ def test_e6_m5_finds_51_optimal_column_sets():
         )
 
         assert cost == optimal_cost == 226
+        
+def test_enumerate_optimal_column_sets_is_complete():
+    """
+    Regression test for completeness.
+
+    The matrix has five distinct optimal column sets. The
+    enumeration must return all of them, not only a subset.
+    """
+    O = sp.Matrix([
+        [3, 2, 1, 2, 2],
+        [1, 2, 0, 1, 1],
+        [1, 3, 3, 2, 1],
+    ])
+
+    initial_columns, optimal_cost = minimum_cost_matching(O)
+
+    assert optimal_cost == 3
+    assert len(initial_columns) == 3
+
+    optimal_sets = enumerate_optimal_column_sets(
+        O,
+        initial_columns,
+        optimal_cost
+    )
+
+    assert optimal_sets == [
+        [0, 1, 2],
+        [0, 2, 3],
+        [0, 2, 4],
+        [1, 2, 4],
+        [2, 3, 4],
+    ]
