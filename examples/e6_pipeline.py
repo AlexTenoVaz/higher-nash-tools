@@ -11,7 +11,7 @@ from source.pipeline import build_pipeline
 
 t = sp.symbols("t")
 f = x**2 + y**3 + z**4
-divisor = x + sp.I*z
+divisor = x**2 + y*z + z**2
 
 curve_1_on_divisor, curve_2_on_divisor = curves_on_divisor(
     divisor=divisor,
