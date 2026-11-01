@@ -1,30 +1,22 @@
 import sympy as sp
 
-
 def order_t(expr, parameter):
-    """
-    Compute the order of vanishing of an expression at parameter = 0.
-
-    For a nonzero polynomial in `parameter`, this is the smallest
-    exponent with nonzero coefficient.
-
-    Parameters
-    ----------
-    expr : sympy.Expr
-        Expression in the parameter.
-    parameter : sympy.Symbol
-        Parameter with respect to which the order is computed.
-
-    Returns
-    -------
-    int or sympy.oo
-        The order of vanishing. Returns +oo for the zero expression.
-    """
-    expr = sp.expand(expr)
+    expr = sp.simplify(expr)
 
     if expr == 0:
         return sp.oo
 
-    poly = sp.Poly(expr, parameter)
+    leading_term = sp.simplify(
+        expr.as_leading_term(parameter)
+    )
 
-    return min(exponent[0] for exponent in poly.monoms())
+    exponent = sp.sympify(
+        leading_term.as_powers_dict().get(parameter, 0)
+    )
+
+    if exponent.is_integer is not True:
+        raise ValueError(
+            "The leading exponent must be an integer."
+        )
+
+    return int(exponent)
